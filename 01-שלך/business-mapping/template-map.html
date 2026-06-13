@@ -1,0 +1,560 @@
+<!doctype html>
+<!--
+  תבנית מפת העסק. הסקיל / ה-CLAUDE.md ממלא אותה בנתוני המשתמש ושומר כ-מפת-העסק.html.
+  כללי מילוי:
+  • החלף כל {{...}} בנתון האמיתי של המשתמש.
+  • שורה <tr> לכל משימה. תג סוג: class="tag A" / "tag B" / "tag C".
+  • עמודת "איך נעשה": ידני → <td class="manual">✋ ידני</td>, חלקי → <td class="part">◐ חלקי</td>, אוטומטי → <td class="auto">✓ אוטומטי</td>.
+  • עמודת "✓ לבנות?" — הכלל: רק אם המשימה ידנית/חלקי + חוזרת + לא דורשת מגע/החלטה אנושית → מועמדת לסוכן:
+        <td><input type="checkbox" class="pick" data-task="שם המשימה"></td>
+    אם דורשת אותך (A / שיחה / להיות הפנים / שיקול דעת) → לא מועמדת:
+        <td><span class="need-you">✋ צריך אותך</span></td>
+  • דירוג מחלקות: bar-row לכל מחלקה, מהכבדה לקלה. הראשונה → class="bar-fill top".
+  • אל תיגע ב-CSS וב-JS. רק התוכן ({{...}} והשורות) משתנה.
+-->
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>מפת העסק — {{שם_העסק}}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0c;
+        --panel: #141417;
+        --line: #26262b;
+        --gold1: #9c6b28;
+        --gold2: #eac56e;
+        --txt: #f4f1ea;
+        --muted: #9b978d;
+        --A: #e5484d;
+        --B: #eac56e;
+        --C: #46a758;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family: "Rubik", sans-serif;
+        padding: 48px 32px 90px;
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .kicker {
+        color: var(--muted);
+        font-size: 14px;
+        letter-spacing: 0.18em;
+        font-weight: 500;
+      }
+      h1 {
+        font-size: 42px;
+        font-weight: 700;
+        margin: 6px 0 4px;
+        background: linear-gradient(90deg, var(--gold1), var(--gold2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 16px;
+        margin-bottom: 32px;
+      }
+      .profile {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px 26px;
+        margin-bottom: 36px;
+      }
+      .profile b {
+        color: var(--gold2);
+        font-weight: 600;
+      }
+      h2 {
+        font-size: 13px;
+        letter-spacing: 0.16em;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        margin: 34px 0 14px;
+      }
+      .h2sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin: -8px 0 14px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+        font-size: 15px;
+      }
+      th {
+        background: #1b1b1f;
+        color: var(--muted);
+        font-weight: 600;
+        text-align: right;
+        padding: 13px 16px;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      td {
+        padding: 11px 16px;
+        border-top: 1px solid var(--line);
+        vertical-align: middle;
+      }
+      .dept {
+        font-weight: 600;
+        color: var(--gold2);
+        white-space: nowrap;
+      }
+      .tag {
+        display: inline-block;
+        width: 26px;
+        height: 26px;
+        line-height: 26px;
+        text-align: center;
+        border-radius: 7px;
+        font-weight: 700;
+        font-size: 14px;
+        color: #0a0a0c;
+      }
+      .A {
+        background: var(--A);
+        color: #fff;
+      }
+      .B {
+        background: var(--B);
+      }
+      .C {
+        background: var(--C);
+        color: #fff;
+      }
+      .manual {
+        font-size: 13px;
+        color: var(--A);
+        font-weight: 600;
+      }
+      .part {
+        font-size: 13px;
+        color: var(--gold2);
+        font-weight: 600;
+      }
+      .auto {
+        font-size: 13px;
+        color: var(--C);
+        font-weight: 600;
+      }
+      .need-you {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .pick {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--gold2);
+        cursor: pointer;
+      }
+      .who {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .legend {
+        display: flex;
+        gap: 22px;
+        margin: 14px 0 0;
+        font-size: 14px;
+        color: var(--muted);
+        flex-wrap: wrap;
+      }
+      .legend span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .focus {
+        background: var(--panel);
+        border: 1px solid var(--A);
+        border-radius: 14px;
+        padding: 22px 26px;
+        margin-bottom: 18px;
+      }
+      .focus h3 {
+        color: var(--A);
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .focus p {
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .bars {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .bar-label {
+        flex: 0 0 130px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .bar-track {
+        flex: 1;
+        background: #1b1b1f;
+        border-radius: 6px;
+        height: 24px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        background: linear-gradient(90deg, var(--gold1), var(--gold2));
+      }
+      .bar-fill.top {
+        background: linear-gradient(90deg, #b3373b, var(--A));
+      }
+      .bar-val {
+        flex: 0 0 190px;
+        font-size: 13px;
+        color: var(--muted);
+        text-align: left;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 16px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 22px 24px;
+      }
+      .card.full {
+        grid-column: 1/-1;
+        border-color: var(--A);
+      }
+      .card.bottleneck h3 {
+        color: var(--A);
+      }
+      .card h3 {
+        font-size: 19px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .card p {
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .agent {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .agent:first-of-type {
+        border-top: none;
+      }
+      .agent .num {
+        flex: 0 0 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--gold1), var(--gold2));
+        color: #0a0a0c;
+        font-weight: 700;
+      }
+      .agent b {
+        color: var(--txt);
+        font-weight: 600;
+      }
+      .agent small {
+        color: var(--muted);
+        display: block;
+        margin-top: 2px;
+      }
+      .choose {
+        background: linear-gradient(
+          180deg,
+          rgba(234, 197, 110, 0.07),
+          var(--panel)
+        );
+        border: 1px solid var(--gold2);
+        border-radius: 16px;
+        padding: 26px 28px;
+        margin-top: 16px;
+        text-align: center;
+      }
+      .choose h3 {
+        color: var(--gold2);
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .choose p {
+        color: var(--txt);
+        font-size: 15px;
+        margin-bottom: 16px;
+        max-width: 620px;
+        margin-inline: auto;
+      }
+      .go {
+        background: linear-gradient(135deg, var(--gold1), var(--gold2));
+        color: #0a0a0c;
+        border: none;
+        border-radius: 13px;
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 15px 38px;
+        cursor: pointer;
+      }
+      .go:hover {
+        transform: translateY(-1px);
+      }
+      .donemsg {
+        display: none;
+        margin-top: 14px;
+        color: var(--C);
+        font-weight: 600;
+      }
+      #planfb {
+        display: none;
+        width: 100%;
+        max-width: 620px;
+        height: 150px;
+        margin: 14px auto 0;
+        background: #0a0a0c;
+        border: 1px solid var(--gold2);
+        border-radius: 10px;
+        color: var(--txt);
+        font-family: inherit;
+        font-size: 13px;
+        padding: 12px;
+        direction: rtl;
+      }
+      .stamp {
+        margin-top: 40px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="kicker">מפת העסק · נבנתה ב-Claude Code</div>
+      <h1>{{שם_העסק}}</h1>
+      <div class="sub">{{משפט_תיאור_קצר}}</div>
+
+      <div class="profile">
+        <b>מה מוכרים:</b> {{מה_מוכרים}} · <b>לקוח טיפוסי:</b> {{לקוח_טיפוסי}} ·
+        <b>צוות:</b> {{צוות}}.
+      </div>
+
+      <h2>טבלת מיפוי המשימות</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>מחלקה</th>
+            <th>משימה</th>
+            <th>איך נעשה</th>
+            <th>תדירות</th>
+            <th>סוג</th>
+            <th>✓ לבנות?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- שורה לכל משימה. דוגמה למועמדת לסוכן (ידני+חוזר+לא דורש אותך): -->
+          <tr>
+            <td class="dept">{{מחלקה}}</td>
+            <td>{{משימה}}</td>
+            <td class="manual">✋ ידני</td>
+            <td>{{תדירות}}</td>
+            <td><span class="tag C">C</span></td>
+            <td>
+              <input type="checkbox" class="pick" data-task="{{משימה}}" />
+            </td>
+          </tr>
+          <!-- דוגמה למשימה שדורשת אותך (A / החלטה / מגע) — לא מועמדת: -->
+          <tr>
+            <td class="dept">{{מחלקה}}</td>
+            <td>{{משימה_שדורשת_אותך}}</td>
+            <td class="manual">✋ ידני</td>
+            <td>{{תדירות}}</td>
+            <td><span class="tag A">A</span></td>
+            <td><span class="need-you">✋ צריך אותך</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="legend">
+        <span
+          ><i class="dot" style="background: var(--A)"></i> ✋ ידני / A — רק
+          אתה</span
+        >
+        <span
+          ><i class="dot" style="background: var(--gold2)"></i> ◐ חלקי / B</span
+        >
+        <span
+          ><i class="dot" style="background: var(--C)"></i> ✓ אוטומטי / C —
+          לסוכן</span
+        >
+      </div>
+
+      <h2>איזו מחלקה הכי דורשת טיפול</h2>
+      <div class="h2sub">דירוג לפי כמה עבודה ידנית-חוזרת אפשר להוריד ממך</div>
+      <div class="focus">
+        <h3>🎯 לטיפול ראשון: {{מחלקה_לטיפול_ראשון}}</h3>
+        <p>{{הסבר_מחלקה_לטיפול_ראשון}}</p>
+      </div>
+      <div class="bars">
+        <div class="bar-row">
+          <span class="bar-label">{{מחלקה}}</span>
+          <div class="bar-track">
+            <div class="bar-fill top" style="width: 100%"></div>
+          </div>
+          <span class="bar-val">{{תיאור_עומס}}</span>
+        </div>
+      </div>
+
+      <h2>האבחון</h2>
+      <div class="cards">
+        <div class="card bottleneck full">
+          <h3>🔴 צוואר הבקבוק שלך</h3>
+          <p>{{אבחון_צוואר_בקבוק}}</p>
+        </div>
+        <div class="card">
+          <h3>⬇️ מה לרדת מהשולחן עכשיו</h3>
+          <p>{{מה_לרדת_מהשולחן}}</p>
+        </div>
+        <div class="card">
+          <h3>✅ מה להישאר עליו</h3>
+          <p>{{מה_להישאר_עליו}}</p>
+        </div>
+      </div>
+
+      <h2>רעיונות לסוכנים (השראה — לא חובה)</h2>
+      <div class="card full" style="border-color: var(--line)">
+        <div class="agent">
+          <div class="num">1</div>
+          <div><b>{{סוכן_1_שם}}</b><small>{{סוכן_1_תיאור}}</small></div>
+        </div>
+        <div class="agent">
+          <div class="num">2</div>
+          <div><b>{{סוכן_2_שם}}</b><small>{{סוכן_2_תיאור}}</small></div>
+        </div>
+        <div class="agent">
+          <div class="num">3</div>
+          <div><b>{{סוכן_3_שם}}</b><small>{{סוכן_3_תיאור}}</small></div>
+        </div>
+      </div>
+
+      <h2>הצעד שלך — אתה בוחר</h2>
+      <div class="choose">
+        <h3>✍️ איזה משימות תרצה ש-Claude יבנה בשבילך?</h3>
+        <p>
+          סמן למעלה (בעמודת "✓ לבנות?") את המשימות הידניות-החוזרות שהכי תרצה
+          להוריד. <b>אתה בוחר</b> — לא בונים הכל, בוחרים בפוקוס. ואז:
+        </p>
+        <button class="go" onclick="copyPlan()">
+          אלה המשימות שאני בונה ← צור לי תוכנית
+        </button>
+        <div class="donemsg" id="donemsg">
+          ✓ הועתק! הדבק (Cmd+V) ל-Claude — והוא יכתוב לך את "המטרה שלי".
+        </div>
+        <textarea id="planfb" readonly></textarea>
+      </div>
+
+      <div class="stamp">
+        — מעכשיו Claude Code מכיר את העסק הזה ויעבוד לפי המפה הזו —
+      </div>
+    </div>
+
+    <script>
+      function copyPlan() {
+        const picked = Array.from(
+          document.querySelectorAll(".pick:checked"),
+        ).map((c) => c.getAttribute("data-task"));
+        if (!picked.length) {
+          alert("סמן קודם לפחות משימה אחת בעמודת '✓ לבנות?'");
+          return;
+        }
+        let t =
+          "המטרה שלי — אלה המשימות הידניות-חוזרות שבחרתי להוריד ולבנות עליהן סוכן:\n";
+        t += picked.map((p) => "- " + p).join("\n");
+        t +=
+          "\n\nתכתוב לי קובץ 'המטרה-שלי.md': הסיסטם/סוכן שיבנה את אלה, מה זה מוריד ממני, וצוואר הבקבוק שזה פותר. זה מה שאני לוקח למפגש הבא.";
+        copyOut(t);
+      }
+      function copyOut(t) {
+        const msg = document.getElementById("donemsg");
+        const fb = document.getElementById("planfb");
+        const ok = () => {
+          msg.style.display = "block";
+          fb.style.display = "none";
+        };
+        const manual = () => {
+          fb.value = t;
+          fb.style.display = "block";
+          msg.style.display = "none";
+          fb.focus();
+          fb.select();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(t)
+            .then(ok)
+            .catch(() => execCopy(t, ok, manual));
+        } else {
+          execCopy(t, ok, manual);
+        }
+      }
+      function execCopy(t, ok, manual) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = t;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const s = document.execCommand("copy");
+          document.body.removeChild(ta);
+          if (s) {
+            ok();
+            return;
+          }
+        } catch (e) {}
+        manual();
+      }
+    </script>
+  </body>
+</html>

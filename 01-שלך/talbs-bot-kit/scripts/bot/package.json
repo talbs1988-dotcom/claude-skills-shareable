@@ -1,0 +1,15 @@
+{
+  "name": "personal-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "Personal WhatsApp ↔ Claude bot via Green API",
+  "type": "module",
+  "main": "green-api-bot.js",
+  "scripts": {
+    "start": "node green-api-bot.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "license": "MIT"
+}

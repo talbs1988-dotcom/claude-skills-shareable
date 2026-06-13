@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>המשימות שלי</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0c;
+        --panel: #15151a;
+        --field: #1d1d23;
+        --line: #2b2b32;
+        --gold1: #9c6b28;
+        --gold2: #eac56e;
+        --txt: #f4f1ea;
+        --muted: #9b978d;
+        --A: #e5484d;
+        --C: #46a758;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family: "Rubik", sans-serif;
+        padding: 44px 28px 90px;
+        line-height: 1.55;
+      }
+      .wrap {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .kicker {
+        color: var(--gold2);
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: 38px;
+        font-weight: 700;
+        margin: 8px 0 8px;
+        background: linear-gradient(90deg, var(--gold1), var(--gold2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+      .saved-hint {
+        font-size: 13px;
+        color: var(--C);
+        margin-bottom: 30px;
+        font-weight: 500;
+      }
+      .q {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+      }
+      .q-head {
+        margin-bottom: 16px;
+      }
+      .q-head h3 {
+        font-size: 19px;
+        font-weight: 600;
+        color: var(--gold2);
+      }
+      .q-head span {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .row .task {
+        flex: 1;
+        background: var(--field);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: var(--txt);
+        font-family: inherit;
+        font-size: 15px;
+        padding: 11px 13px;
+      }
+      .row .task:focus {
+        outline: none;
+        border-color: var(--gold2);
+      }
+      .pills {
+        display: flex;
+        gap: 5px;
+        flex: 0 0 auto;
+      }
+      .pill {
+        background: var(--field);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-family: inherit;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.1s;
+      }
+      .pill:hover {
+        border-color: var(--gold2);
+        color: var(--txt);
+      }
+      .pill.on {
+        background: linear-gradient(135deg, var(--gold1), var(--gold2));
+        color: #0a0a0c;
+        border-color: var(--gold2);
+        font-weight: 700;
+      }
+      .del {
+        background: none;
+        border: none;
+        color: #5a575f;
+        font-size: 20px;
+        cursor: pointer;
+        line-height: 1;
+        flex: 0 0 auto;
+        padding: 0 4px;
+      }
+      .del:hover {
+        color: var(--A);
+      }
+      .add {
+        background: none;
+        border: 1px dashed var(--line);
+        color: var(--gold2);
+        border-radius: 9px;
+        padding: 9px 18px;
+        font-size: 14px;
+        font-family: inherit;
+        cursor: pointer;
+        font-weight: 500;
+        margin-top: 4px;
+      }
+      .add:hover {
+        border-color: var(--gold2);
+      }
+      .cta {
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent, var(--bg) 40%);
+        padding-top: 28px;
+        margin-top: 10px;
+        text-align: center;
+      }
+      .go {
+        background: linear-gradient(135deg, var(--gold1), var(--gold2));
+        color: #0a0a0c;
+        border: none;
+        border-radius: 13px;
+        font-family: inherit;
+        font-size: 17px;
+        font-weight: 700;
+        padding: 16px 42px;
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+      .go:hover {
+        transform: translateY(-1px);
+      }
+      .done {
+        display: none;
+        margin-top: 14px;
+        color: var(--C);
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 12px;
+        max-width: 520px;
+        margin-inline: auto;
+      }
+      #fallback-box {
+        max-width: 600px;
+        margin: 16px auto 0;
+        text-align: right;
+      }
+      #fallback {
+        width: 100%;
+        height: 150px;
+        margin-top: 8px;
+        background: var(--field);
+        border: 1px solid var(--gold2);
+        border-radius: 10px;
+        color: var(--txt);
+        font-family: inherit;
+        font-size: 13px;
+        padding: 12px;
+        direction: rtl;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="kicker">מנהל המשרד · נתחיל</div>
+      <h1>אילו משימות נוריד ממך?</h1>
+      <div class="sub">
+        ענה על 3 השאלות — כל משימה בשורה, וסמן אם היא נעשית <b>ידני</b> או
+        <b>אוטומטי</b>. זה הכל.
+      </div>
+      <div class="saved-hint">💾 נשמר אוטומטית — אפשר לסגור ולחזור.</div>
+
+      <div id="questions"></div>
+
+      <div class="cta">
+        <button class="go" onclick="copyAll()">סיימתי — תיקח את אלה ←</button>
+        <div class="done" id="done">
+          ✓ הועתק! הדבק (Cmd+V) ל-Claude — והוא יתחיל להוריד מהן ממך.
+        </div>
+        <div class="note">
+          לוחצים → מועתק → מדביקים ל-Claude → הוא לוקח את המשימות ומתחיל לעבוד.
+        </div>
+        <div id="fallback-box" style="display: none">
+          <div class="note" style="margin: 0; max-width: none">
+            לא הועתק? בחר הכל (Cmd+A) והעתק (Cmd+C) מהתיבה:
+          </div>
+          <textarea id="fallback" readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const SECTIONS = [
+        [
+          "tiring",
+          "אילו משימות ידניות, שחוזרות על עצמן ומתישות אותך, יש בעסק?",
+          "אלה המועמדות הראשונות לאוטומציה",
+        ],
+        [
+          "postponed",
+          "אילו משימות חשובות אתה כל הזמן דוחה?",
+          "אתה יודע שהן חשובות — והן נדחקות שוב ושוב",
+        ],
+        [
+          "boring",
+          "אילו משימות תפעוליות ומשעממות יש בעסק?",
+          "אלה שהכי כדאי להוריד ממך",
+        ],
+      ];
+      const DONE = ["ידני", "אוטומטי"];
+      const LS_KEY = "ccb-tasks-v1";
+
+      function pillsHTML() {
+        return (
+          '<div class="pills">' +
+          DONE.map(
+            (v) =>
+              `<button type="button" class="pill" data-v="${v}">${v}</button>`,
+          ).join("") +
+          "</div>"
+        );
+      }
+      function rowHTML() {
+        return `<div class="row">
+        <input type="text" class="task" placeholder="כתוב כאן משימה…">
+        ${pillsHTML()}
+        <button class="del" title="מחק" onclick="this.closest('.row').remove();saveState()">×</button>
+      </div>`;
+      }
+      function rowDone(r) {
+        const on = r.querySelector(".pill.on");
+        return on ? on.getAttribute("data-v") : "";
+      }
+      function setRowDone(r, val) {
+        if (!val) return;
+        const b = r.querySelector('.pill[data-v="' + val + '"]');
+        if (b) b.classList.add("on");
+      }
+      function addRow(id, data) {
+        const box = document.querySelector("#s-" + id + " .rows");
+        box.insertAdjacentHTML("beforeend", rowHTML());
+        if (data) {
+          const r = box.lastElementChild;
+          r.querySelector(".task").value = data.task || "";
+          setRowDone(r, data.done);
+        }
+        saveState();
+      }
+
+      function collectState() {
+        const state = {};
+        SECTIONS.forEach((s) => {
+          state[s[0]] = [];
+          document.querySelectorAll("#s-" + s[0] + " .row").forEach((r) => {
+            state[s[0]].push({
+              task: r.querySelector(".task").value,
+              done: rowDone(r),
+            });
+          });
+        });
+        return state;
+      }
+      function saveState() {
+        try {
+          localStorage.setItem(LS_KEY, JSON.stringify(collectState()));
+        } catch (e) {}
+      }
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      document.getElementById("questions").innerHTML = SECTIONS.map(
+        (s) => `
+      <div class="q" id="s-${s[0]}">
+        <div class="q-head"><h3>${s[1]}</h3><span>${s[2]}</span></div>
+        <div class="rows"></div>
+        <button class="add" onclick="addRow('${s[0]}')">+ הוסף משימה</button>
+      </div>`,
+      ).join("");
+
+      const saved = loadState();
+      SECTIONS.forEach((s) => {
+        const rows = saved ? saved[s[0]] : null;
+        if (rows && rows.length) rows.forEach((data) => addRow(s[0], data));
+        else for (let i = 0; i < 3; i++) addRow(s[0]);
+      });
+
+      document.addEventListener("click", (e) => {
+        const p = e.target.closest(".pill");
+        if (!p) return;
+        p.parentElement
+          .querySelectorAll(".pill")
+          .forEach((b) => b.classList.remove("on"));
+        p.classList.add("on");
+        saveState();
+      });
+      document.addEventListener("input", saveState);
+
+      function copyAll() {
+        let t =
+          "המשימות שלי — אלה המשימות שאני רוצה להוריד מעצמי. תרשום אותן ב-משימות.md, ותתחיל להוריד ממני את הראשונה הכי מתישה — תציע לי איך אתה לוקח אותה.\n\n";
+        SECTIONS.forEach((s) => {
+          let lines = [];
+          document.querySelectorAll("#s-" + s[0] + " .row").forEach((r) => {
+            const task = r.querySelector(".task").value.trim();
+            if (!task) return;
+            const done = rowDone(r);
+            lines.push(`- ${task}${done ? " (" + done + ")" : ""}`);
+          });
+          t += `## ${s[1]}\n${lines.length ? lines.join("\n") : "(אין)"}\n\n`;
+        });
+        copyOut(t);
+      }
+      function copyOut(t) {
+        const done = document.getElementById("done");
+        const box = document.getElementById("fallback-box");
+        const ok = () => {
+          done.style.display = "block";
+          box.style.display = "none";
+        };
+        const manual = () => {
+          const fb = document.getElementById("fallback");
+          fb.value = t;
+          box.style.display = "block";
+          done.style.display = "none";
+          fb.focus();
+          fb.select();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(t)
+            .then(ok)
+            .catch(() => execCopy(t, ok, manual));
+        } else {
+          execCopy(t, ok, manual);
+        }
+      }
+      function execCopy(t, ok, manual) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = t;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const s = document.execCommand("copy");
+          document.body.removeChild(ta);
+          if (s) {
+            ok();
+            return;
+          }
+        } catch (e) {}
+        manual();
+      }
+    </script>
+  </body>
+</html>

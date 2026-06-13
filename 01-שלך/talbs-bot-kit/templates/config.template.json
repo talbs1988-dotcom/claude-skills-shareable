@@ -1,0 +1,13 @@
+{
+  "agentName": "{{BOT_NAME}}",
+  "claudeBin": "claude",
+  "workdir": "~",
+  "model": "sonnet",
+  "whitelist": ["{{USER_WHATSAPP_NUMBER}}"],
+  "publicMode": false,
+  "groupMode": "off",
+  "systemPromptAppend": "{{SYSTEM_PROMPT_APPEND_ESCAPED}}",
+  "permissionMode": "bypassPermissions",
+  "ttsMode": "mirror",
+  "ttsVoice": "alloy"
+}
