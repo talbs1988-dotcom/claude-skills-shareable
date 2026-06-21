@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>בונה הסיסטמים — מפת הסקיל</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0c;
+        --panel: #141417;
+        --card: #17171b;
+        --line: #26262b;
+        --gold1: #9c6b28;
+        --gold2: #eac56e;
+        --txt: #f4f1ea;
+        --muted: #9b978d;
+        --ask: #5b9bd5;
+        --do: #46a758;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family: "Rubik", sans-serif;
+        padding: 44px 28px 80px;
+        line-height: 1.55;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+      .kicker {
+        color: var(--gold2);
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: 40px;
+        font-weight: 700;
+        margin: 8px 0 6px;
+        background: linear-gradient(90deg, var(--gold1), var(--gold2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 17px;
+        margin-bottom: 34px;
+        max-width: 720px;
+      }
+      /* ההסבר — 3 דברים */
+      .how {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 26px 30px;
+        margin-bottom: 44px;
+      }
+      .how h2 {
+        font-size: 15px;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 18px;
+        font-weight: 600;
+      }
+      .steps3 {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .s3 {
+        flex: 1;
+        min-width: 240px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 18px 20px;
+      }
+      .s3 .n {
+        display: inline-flex;
+        width: 30px;
+        height: 30px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: linear-gradient(135deg, var(--gold1), var(--gold2));
+        color: #0a0a0c;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+      .s3 b {
+        color: var(--gold2);
+        font-size: 17px;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .s3 span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      /* קבוצות */
+      .group-label {
+        font-size: 14px;
+        letter-spacing: 0.12em;
+        color: var(--gold2);
+        text-transform: uppercase;
+        font-weight: 700;
+        margin: 8px 0 18px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+        gap: 16px;
+        margin-bottom: 40px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 20px 22px;
+        display: flex;
+        flex-direction: column;
+      }
+      .card .top {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .card .num {
+        flex-shrink: 0;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #1f1a10;
+        border: 1px solid var(--gold1);
+        color: var(--gold2);
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .card .ttl {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--txt);
+        line-height: 1.3;
+      }
+      .card .stage {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 3px;
+      }
+      .blk {
+        margin-top: 12px;
+      }
+      .blk .h {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .blk.need .h {
+        color: var(--do);
+      }
+      .blk.ask .h {
+        color: var(--ask);
+      }
+      .blk ul {
+        list-style: none;
+      }
+      .blk li {
+        font-size: 14px;
+        padding: 3px 0 3px 0;
+        color: var(--txt);
+        position: relative;
+        padding-right: 16px;
+      }
+      .blk li::before {
+        content: "•";
+        position: absolute;
+        right: 0;
+        color: var(--muted);
+      }
+      .blk.ask li {
+        color: #cfe0f0;
+        font-style: italic;
+      }
+      .foot {
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+        border-top: 1px solid var(--line);
+        padding-top: 22px;
+        margin-top: 20px;
+      }
+      .foot b {
+        color: var(--gold2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="kicker">השיטה של טל בשור · שלב 2 בליווי</div>
+      <h1>בונה הסיסטמים — מפת הסקיל</h1>
+      <div class="sub">
+        הסקיל לא בונה במקום בעל העסק ולא ממציא לו שלבים. הוא
+        <b style="color: var(--gold2)">מדריך אותו לבנות את הסיסטמים שלו</b> —
+        שלב אחר שלב במסע הלקוח.
+      </div>
+
+      <div class="how">
+        <h2>מה הסקיל עושה בכל סיסטם — 3 דברים</h2>
+        <div class="steps3">
+          <div class="s3">
+            <span class="n">1</span><b>מראה מה צריך להיות</b
+            ><span>הסטנדרט שלך — מה שאת יודעת שצריך להיות בשלב הזה</span>
+          </div>
+          <div class="s3">
+            <span class="n">2</span><b>שואל את בעל העסק</b
+            ><span
+              >איך <i>הוא</i> עושה את זה היום — והוא רושם את השלבים שלו</span
+            >
+          </div>
+          <div class="s3">
+            <span class="n">3</span><b>עוזר לייעל</b
+            ><span>מראה את הפער מול הסטנדרט — מה לסדר, מה לאטמט</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="group-label">🧭 מסע הלקוח</div>
+      <div class="grid">
+        <div class="card">
+          <div class="top">
+            <div class="num">1</div>
+            <div>
+              <div class="ttl">יצירת תוכן והבאת מתעניינים</div>
+              <div class="stage">איך אנשים שומעים עליך ומגיעים</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>מקור קבוע של מתעניינים — לא "פוסט כשבא לי"</li>
+              <li>ידוע מאיפה כל מתעניין הגיע</li>
+              <li>זה קורה כל שבוע, גם בלעדיך</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>איך אנשים מגיעים אליך היום? מאיפה?</li>
+              <li>זה קורה בקביעות או כשאתה נזכר?</li>
+              <li>אתה יודע איזה ערוץ מביא הכי הרבה?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">2</div>
+            <div>
+              <div class="ttl">איסוף לידים</div>
+              <div class="stage">שאף מתעניין לא נופל בין הכיסאות</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>כל ליד נכנס למקום אחד (CRM)</li>
+              <li>ידוע מאיפה הגיע</li>
+              <li>אף אחד לא נשכח</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>איפה הלידים שלך נשמרים היום?</li>
+              <li>מה קורה כשמישהו פונה אליך?</li>
+              <li>קורה שלידים נופלים לך?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">3</div>
+            <div>
+              <div class="ttl">חימום לידים</div>
+              <div class="stage">להפוך מתעניין למוכן לקנות</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>כל ליד מקבל מעקב</li>
+              <li>לא תלוי בזיכרון שלך</li>
+              <li>יודעים מי בשל לפגישה</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>איך אתה חוזר ללידים?</li>
+              <li>זה קבוע או לפי זיכרון?</li>
+              <li>אתה יודע מי מוכן לקנות?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">3א</div>
+            <div>
+              <div class="ttl">דיוור למתעניינים</div>
+              <div class="stage">שאף מתעניין לא "מת" — שמירת קשר</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>שמירת קשר מתמשכת עם כל המאגר</li>
+              <li>גם מי שאמר "לא עכשיו" חוזר</li>
+              <li>ערך קבוע, לא רק "תקנה"</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>מה קורה עם מי שלא קנה?</li>
+              <li>אתה שומר איתם קשר?</li>
+              <li>יש לך רשימת תפוצה/דיוור?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">4</div>
+            <div>
+              <div class="ttl">שיחת מכירה</div>
+              <div class="stage">להפוך מתעניין ללקוח משלם</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>מבנה קבוע לשיחה</li>
+              <li>אותה איכות בכל פעם</li>
+              <li>הכנה לפני השיחה</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>איך נראית שיחת מכירה אצלך?</li>
+              <li>יש לך מבנה, או לפי איך שיוצא?</li>
+              <li>אתה מתכונן לפני?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">5</div>
+            <div>
+              <div class="ttl">הצעת מחיר</div>
+              <div class="stage">לסגור בזמן שהליד עוד חם</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>יוצאת מהר (לפני שמתקרר)</li>
+              <li>מחיר לפי שיטה, לא מהבטן</li>
+              <li>אחידה ומקצועית</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>כמה זמן לוקח לך להוציא הצעה?</li>
+              <li>איך אתה קובע מחיר?</li>
+              <li>יש לך תבנית מוכנה?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">6</div>
+            <div>
+              <div class="ttl">קליטת לקוח</div>
+              <div class="stage">מהתשלום לעבודה — בלי חרטת קנייה</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>הלקוח יודע מה קורה הלאה</li>
+              <li>מקבל משהו כבר ביום הראשון</li>
+              <li>מתחילים מסודר, לא "שקט"</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>מה קורה מהרגע שמשלמים לך?</li>
+              <li>הלקוח מקבל משהו?</li>
+              <li>יש תהליך קבוע או כל פעם אחרת?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">7</div>
+            <div>
+              <div class="ttl">גבייה</div>
+              <div class="stage">שהכסף ייכנס — בלי לרדוף</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>כל תשלום במעקב</li>
+              <li>תזכורות יוצאות לבד</li>
+              <li>חשבונית אוטומטית</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>איך אתה גובה תשלומים?</li>
+              <li>קורה שאתה רודף אחרי כסף?</li>
+              <li>החשבוניות יוצאות אוטומטית?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">8</div>
+            <div>
+              <div class="ttl">מתן השירות</div>
+              <div class="stage">אותה איכות — בלי קשר למי מבצע</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>שלבים ברורים בשירות</li>
+              <li>רף איכות מוגדר</li>
+              <li>אפשר להעביר לעובד</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>מה השלבים בשירות שלך?</li>
+              <li>זה כתוב, או בראש שלך?</li>
+              <li>עובד חדש יכול לבצע לבד?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">9</div>
+            <div>
+              <div class="ttl">סיום שירות</div>
+              <div class="stage">להפוך סוף לכסף הזול ביותר</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>תהליך סיום קבוע</li>
+              <li>מבקשים המלצה והפניה</li>
+              <li>מציעים שלב המשך</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>איך אתה מסיים עם לקוח?</li>
+              <li>אתה מבקש המלצה?</li>
+              <li>מציע לו משהו הלאה?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="group-label">🏗️ תשתית העסק</div>
+      <div class="grid">
+        <div class="card">
+          <div class="top">
+            <div class="num">10</div>
+            <div>
+              <div class="ttl">פיננסים</div>
+              <div class="stage">לדעת כמה באמת נשאר</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>יודעים כמה נכנס, יצא, נשאר</li>
+              <li>חשבון עסקי נפרד מפרטי</li>
+              <li>מעקב קבוע, לא פעם בשנה</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>אתה יודע כמה הרווחת החודש?</li>
+              <li>יש לך חשבון עסקי נפרד?</li>
+              <li>אתה עוקב אחרי המספרים?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">11</div>
+            <div>
+              <div class="ttl">תפעול ואדמיניסטרציה</div>
+              <div class="stage">שבעל העסק יוצא מהביצוע</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>כל המשימות במקום אחד</li>
+              <li>מה שחוזר — הופך לאוטומטי</li>
+              <li>נהלים כתובים, לא בראש</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>איך אתה מנהל משימות?</li>
+              <li>מה חוזר על עצמו כל יום?</li>
+              <li>יש לך נהלים כתובים?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">12</div>
+            <div>
+              <div class="ttl">ניהול ובקרה</div>
+              <div class="stage">לנהל לפי מספרים, לא תחושה</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>לוח מדדים קבוע</li>
+              <li>מקצב שבועי קבוע</li>
+              <li>רואים מה עובד ומה לא</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>אתה עוקב אחרי מדדים?</li>
+              <li>יש לך ישיבה קבועה?</li>
+              <li>אתה יודע מה עובד בעסק?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top">
+            <div class="num">13</div>
+            <div>
+              <div class="ttl">ניהול צוות</div>
+              <div class="stage">שהצוות רץ גם בלעדיך</div>
+            </div>
+          </div>
+          <div class="blk need">
+            <div class="h">🎯 מה צריך להיות</div>
+            <ul>
+              <li>ישיבות צוות קבועות</li>
+              <li>משוב ובקרה לפי מדדים</li>
+              <li>תהליך גיוס מסודר</li>
+            </ul>
+          </div>
+          <div class="blk ask">
+            <div class="h">❓ מה שואלים</div>
+            <ul>
+              <li>יש לך ישיבות צוות?</li>
+              <li>אתה נותן משוב לעובדים?</li>
+              <li>איך אתה מגייס?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot">
+        14 סיסטמים · מסע הלקוח + תשתית · <b>"סדר מייצר כסף"</b> — השיטה של טל
+        בשור
+      </div>
+    </div>
+  </body>
+</html>

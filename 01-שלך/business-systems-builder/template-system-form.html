@@ -1,0 +1,477 @@
+<!doctype html>
+<!--
+  טופס חליבת סיסטם. הסקיל מעתיק אותו לתיקיית העבודה כ-חליבת-סיסטם.html, ממלא את שם הסיסטם
+  ב-{{שם_הסיסטם}}, ופותח בדפדפן. בעל העסק ממלא, לוחץ "סיימתי", ומדביק את הפלט ל-Claude.
+  אל תיגע ב-CSS וב-JS — רק להחליף את {{שם_הסיסטם}} (ואם רוצים, את כותרת המשנה).
+-->
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>חליבת סיסטם — {{שם_הסיסטם}}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0c;
+        --panel: #15151a;
+        --field: #1d1d23;
+        --line: #2b2b32;
+        --gold1: #9c6b28;
+        --gold2: #eac56e;
+        --txt: #f4f1ea;
+        --muted: #9b978d;
+        --C: #46a758;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family: "Rubik", sans-serif;
+        padding: 44px 28px 90px;
+        line-height: 1.55;
+      }
+      .wrap {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .kicker {
+        color: var(--gold2);
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-size: 38px;
+        font-weight: 700;
+        margin: 8px 0 8px;
+        background: linear-gradient(90deg, var(--gold1), var(--gold2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+      .saved-hint {
+        font-size: 13px;
+        color: var(--C);
+        margin-bottom: 30px;
+        font-weight: 500;
+      }
+      .q {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+      }
+      .q-head {
+        margin-bottom: 16px;
+      }
+      .q-head h3 {
+        font-size: 19px;
+        font-weight: 600;
+        color: var(--gold2);
+      }
+      .q-head span {
+        display: block;
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 4px;
+      }
+      .num {
+        display: inline-block;
+        width: 26px;
+        height: 26px;
+        line-height: 26px;
+        text-align: center;
+        border-radius: 8px;
+        background: var(--field);
+        color: var(--gold2);
+        font-size: 14px;
+        font-weight: 700;
+        margin-left: 8px;
+      }
+      textarea.single,
+      input.single {
+        width: 100%;
+        background: var(--field);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: var(--txt);
+        font-family: inherit;
+        font-size: 15px;
+        padding: 12px 14px;
+        direction: rtl;
+        resize: vertical;
+      }
+      textarea.single {
+        min-height: 64px;
+      }
+      input.single:focus,
+      textarea.single:focus,
+      .task:focus {
+        outline: none;
+        border-color: var(--gold2);
+      }
+      .rows {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .row .idx {
+        color: var(--muted);
+        font-size: 13px;
+        min-width: 18px;
+        text-align: center;
+      }
+      .task {
+        flex: 1;
+        background: var(--field);
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        color: var(--txt);
+        font-family: inherit;
+        font-size: 15px;
+        padding: 10px 13px;
+        direction: rtl;
+      }
+      .del {
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-size: 22px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0 4px;
+      }
+      .del:hover {
+        color: #e5484d;
+      }
+      .add {
+        background: var(--field);
+        border: 1px dashed var(--line);
+        color: var(--gold2);
+        border-radius: 9px;
+        padding: 9px 18px;
+        font-size: 14px;
+        font-family: inherit;
+        cursor: pointer;
+        font-weight: 500;
+        margin-top: 11px;
+      }
+      .add:hover {
+        border-color: var(--gold2);
+      }
+      .cta {
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent, var(--bg) 40%);
+        padding-top: 28px;
+        margin-top: 10px;
+        text-align: center;
+      }
+      .go {
+        background: linear-gradient(135deg, var(--gold1), var(--gold2));
+        color: #0a0a0c;
+        border: none;
+        border-radius: 13px;
+        font-family: inherit;
+        font-size: 17px;
+        font-weight: 700;
+        padding: 16px 42px;
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+      .go:hover {
+        transform: translateY(-1px);
+      }
+      .done {
+        display: none;
+        margin-top: 14px;
+        color: var(--C);
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 12px;
+        max-width: 540px;
+        margin-inline: auto;
+      }
+      #fallback-box {
+        max-width: 600px;
+        margin: 16px auto 0;
+        text-align: right;
+      }
+      #fallback {
+        width: 100%;
+        height: 150px;
+        margin-top: 8px;
+        background: var(--field);
+        border: 1px solid var(--gold2);
+        border-radius: 10px;
+        color: var(--txt);
+        font-family: inherit;
+        font-size: 13px;
+        padding: 12px;
+        direction: rtl;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="kicker">בונה הסיסטמים · מוציאים מהראש</div>
+      <h1>סיסטם {{שם_הסיסטם}}</h1>
+      <div class="sub">
+        אל תכתוב איך זה <b>אמור</b> לעבוד — כתוב איך אתה עושה את זה
+        <b>בפועל היום</b>, כולל הדברים שנראים לך מובנים מאליהם. דווקא הם
+        החשובים.
+      </div>
+      <div class="saved-hint">💾 נשמר אוטומטית — אפשר לסגור ולחזור.</div>
+
+      <div id="questions"></div>
+
+      <div class="cta">
+        <button class="go" onclick="copyAll()">סיימתי — תיקח את זה ←</button>
+        <div class="done" id="done">
+          ✓ הועתק! הדבק (Cmd+V) ל-Claude — והוא יבנה מזה את הסיסטם המסודר.
+        </div>
+        <div class="note">
+          לוחצים → מועתק → מדביקים ל-Claude → הוא בונה נוהל מסודר + תרשים זרימה.
+        </div>
+        <div id="fallback-box" style="display: none">
+          <div class="note" style="margin: 0; max-width: none">
+            לא הועתק? בחר הכל (Cmd+A) והעתק (Cmd+C) מהתיבה:
+          </div>
+          <textarea id="fallback" readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // סוג "single" = שדה אחד (input/textarea). סוג "list" = שורות שאפשר להוסיף.
+      const SECTIONS = [
+        {
+          id: "purpose",
+          type: "single",
+          multiline: true,
+          title: "מה המטרה של התהליך הזה? במשפט אחד.",
+          hint: "מה הוא משיג, ולמה הוא קיים. לדוגמה: להפוך ליד חם ללקוח משלם תוך 48 שעות.",
+          ph: "המטרה של התהליך הזה היא…",
+        },
+        {
+          id: "trigger",
+          type: "single",
+          multiline: true,
+          title: "מה מתחיל את התהליך? (הטריגר)",
+          hint: "האירוע המדויק שאחריו התהליך יוצא לדרך. לדוגמה: לקוח מאשר הצעת מחיר.",
+          ph: "התהליך מתחיל כש…",
+        },
+        {
+          id: "steps",
+          type: "list",
+          title: "השלבים — איך אתה עושה את זה היום, צעד אחר צעד.",
+          hint: "כל שלב בשורה. אם שלב נעשה על ידי מישהו אחר — כתוב מי. אל תדלג על מה שמובן לך מאליו.",
+          ph: "מה אתה עושה בשלב הזה…",
+          start: 4,
+        },
+        {
+          id: "decisions",
+          type: "list",
+          title: 'איפה אתה מתלבט או "תלוי במצב"?',
+          hint: "כל נקודה שבה אתה מחליט משהו — וכתוב לפי מה אתה מחליט. זה הידע שתקוע אצלך בראש.",
+          ph: "אם… אז… (לפי מה אני מחליט)",
+          start: 2,
+        },
+        {
+          id: "breaks",
+          type: "list",
+          title: "מה הכי משתבש בתהליך — ומה אתה עושה אז?",
+          hint: "התקלות הנפוצות. ככה עובד חדש לא ירוץ אליך בכל בעיה קטנה.",
+          ph: "כשקורה… אני…",
+          start: 2,
+        },
+        {
+          id: "success",
+          type: "single",
+          multiline: true,
+          title: "איך אתה יודע שהתהליך נגמר טוב?",
+          hint: "מה קיים בסוף שלא היה בהתחלה. זה מה שאומר לעובד שהוא סיים.",
+          ph: "התהליך נגמר טוב כש…",
+        },
+      ];
+      const LS_KEY = "ccb-system-v1";
+
+      function rowHTML() {
+        return `<div class="row">
+          <input type="text" class="task" placeholder="">
+          <button class="del" title="מחק" onclick="this.closest('.row').remove();renumber();saveState()">×</button>
+        </div>`;
+      }
+      function addRow(id, val) {
+        const box = document.querySelector("#s-" + id + " .rows");
+        box.insertAdjacentHTML("beforeend", rowHTML());
+        const r = box.lastElementChild;
+        const sec = SECTIONS.find((s) => s.id === id);
+        r.querySelector(".task").placeholder = sec ? sec.ph : "";
+        if (val) r.querySelector(".task").value = val;
+        renumber();
+        saveState();
+      }
+      function renumber() {
+        document.querySelectorAll(".q").forEach((q) => {
+          const rows = q.querySelectorAll(".row");
+          rows.forEach((r, i) => {
+            let idx = r.querySelector(".idx");
+            if (!idx) {
+              idx = document.createElement("span");
+              idx.className = "idx";
+              r.insertBefore(idx, r.firstChild);
+            }
+            idx.textContent = i + 1 + ".";
+          });
+        });
+      }
+
+      function collectState() {
+        const state = {};
+        SECTIONS.forEach((s) => {
+          if (s.type === "single") {
+            const el = document.querySelector("#s-" + s.id + " .single");
+            state[s.id] = el ? el.value : "";
+          } else {
+            state[s.id] = [];
+            document
+              .querySelectorAll("#s-" + s.id + " .task")
+              .forEach((t) => state[s.id].push(t.value));
+          }
+        });
+        return state;
+      }
+      function saveState() {
+        try {
+          localStorage.setItem(LS_KEY, JSON.stringify(collectState()));
+        } catch (e) {}
+      }
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      document.getElementById("questions").innerHTML = SECTIONS.map((s, i) => {
+        const head = `<div class="q-head"><h3><span class="num">${i + 1}</span>${s.title}</h3><span>${s.hint}</span></div>`;
+        if (s.type === "single") {
+          const field = s.multiline
+            ? `<textarea class="single" placeholder="${s.ph}"></textarea>`
+            : `<input type="text" class="single" placeholder="${s.ph}">`;
+          return `<div class="q" id="s-${s.id}">${head}${field}</div>`;
+        }
+        return `<div class="q" id="s-${s.id}">${head}
+          <div class="rows"></div>
+          <button class="add" onclick="addRow('${s.id}')">+ הוסף שורה</button>
+        </div>`;
+      }).join("");
+
+      const saved = loadState();
+      SECTIONS.forEach((s) => {
+        if (s.type === "single") {
+          if (saved && saved[s.id]) {
+            const el = document.querySelector("#s-" + s.id + " .single");
+            if (el) el.value = saved[s.id];
+          }
+        } else {
+          const vals = saved ? saved[s.id] : null;
+          if (vals && vals.length) vals.forEach((v) => addRow(s.id, v));
+          else for (let i = 0; i < (s.start || 3); i++) addRow(s.id);
+        }
+      });
+      renumber();
+
+      document.addEventListener("input", saveState);
+
+      function copyAll() {
+        let t =
+          "חליבת סיסטם — זה התהליך כמו שאני עושה אותו היום, מהראש שלי. תבנה מזה סיסטם מסודר: נוהל עבודה + תרשים זרימה. אם משהו לא ברור או חסר — תשאל אותי שאלה ממוקדת לפני שאתה בונה.\n\n";
+        t += "# סיסטם: {{שם_הסיסטם}}\n\n";
+        SECTIONS.forEach((s) => {
+          t += `## ${s.title}\n`;
+          if (s.type === "single") {
+            const el = document.querySelector("#s-" + s.id + " .single");
+            const v = el ? el.value.trim() : "";
+            t += (v || "(לא מולא)") + "\n\n";
+          } else {
+            const lines = [];
+            document.querySelectorAll("#s-" + s.id + " .task").forEach((tk) => {
+              const v = tk.value.trim();
+              if (v) lines.push(`- ${v}`);
+            });
+            t += (lines.length ? lines.join("\n") : "(לא מולא)") + "\n\n";
+          }
+        });
+        copyOut(t);
+      }
+      function copyOut(t) {
+        const done = document.getElementById("done");
+        const box = document.getElementById("fallback-box");
+        const ok = () => {
+          done.style.display = "block";
+          box.style.display = "none";
+        };
+        const manual = () => {
+          const fb = document.getElementById("fallback");
+          fb.value = t;
+          box.style.display = "block";
+          done.style.display = "none";
+          fb.focus();
+          fb.select();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(t)
+            .then(ok)
+            .catch(() => execCopy(t, ok, manual));
+        } else {
+          execCopy(t, ok, manual);
+        }
+      }
+      function execCopy(t, ok, manual) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = t;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const s = document.execCommand("copy");
+          document.body.removeChild(ta);
+          if (s) {
+            ok();
+            return;
+          }
+        } catch (e) {}
+        manual();
+      }
+    </script>
+  </body>
+</html>

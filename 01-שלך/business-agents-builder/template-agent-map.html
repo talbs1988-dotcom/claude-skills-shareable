@@ -1,0 +1,389 @@
+<!doctype html>
+<!--
+  תבנית מפת הסוכנים. הסקיל ממלא אותה ושומר כ-מפת-הסוכנים.html בתיקיית העבודה.
+  כללי מילוי:
+  • החלף כל {{...}} בנתון האמיתי.
+  • שורה <tr> לכל משימת C. צבע סוג: class="ty auto"=🤖 / class="ty cc"=✨ / class="ty human"=✋.
+  • עמודת "מתכון": קוד+שם מהקטלוג (B1 פולו-אפ), או "חדש — חליבה" אם אין מתכון.
+  • עמודת "דירוג": מספר עדיפות. שלוש המשימות המובילות → הוסף class="row-top" ל-<tr>.
+  • אל תיגע ב-CSS וב-JS. רק התוכן ({{...}} והשורות) משתנה.
+-->
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>מפת הסוכנים — {{שם_העסק}}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0c;
+        --panel: #141417;
+        --line: #26262b;
+        --gold1: #9c6b28;
+        --gold2: #eac56e;
+        --txt: #f4f1ea;
+        --muted: #9b978d;
+        --auto: #46a758;
+        --cc: #eac56e;
+        --human: #5b9bd5;
+        --warn: #e5a23d;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family: "Rubik", sans-serif;
+        padding: 48px 32px 90px;
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .kicker {
+        color: var(--muted);
+        font-size: 14px;
+        letter-spacing: 0.18em;
+        font-weight: 500;
+      }
+      h1 {
+        font-size: 42px;
+        font-weight: 700;
+        margin: 6px 0 4px;
+        background: linear-gradient(90deg, var(--gold1), var(--gold2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 16px;
+        margin-bottom: 32px;
+      }
+      h2 {
+        font-size: 13px;
+        letter-spacing: 0.16em;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        margin: 34px 0 14px;
+      }
+      .h2sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin: -8px 0 14px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+        font-size: 15px;
+      }
+      th {
+        background: #1b1b1f;
+        color: var(--muted);
+        font-weight: 600;
+        text-align: right;
+        padding: 13px 16px;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      td {
+        padding: 11px 16px;
+        border-top: 1px solid var(--line);
+        vertical-align: middle;
+      }
+      .dept {
+        font-weight: 600;
+        color: var(--gold2);
+        white-space: nowrap;
+      }
+      .ty {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 7px;
+        font-weight: 600;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .ty.auto {
+        background: rgba(70, 167, 88, 0.16);
+        color: var(--auto);
+      }
+      .ty.cc {
+        background: rgba(234, 197, 110, 0.16);
+        color: var(--cc);
+      }
+      .ty.human {
+        background: rgba(91, 155, 213, 0.16);
+        color: var(--human);
+      }
+      .recipe {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .rank {
+        text-align: center;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .row-top td {
+        background: rgba(234, 197, 110, 0.06);
+      }
+      .row-top .rank {
+        color: var(--gold2);
+      }
+      .pick {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--gold2);
+        cursor: pointer;
+      }
+      .legend {
+        display: flex;
+        gap: 22px;
+        margin: 14px 0 0;
+        font-size: 14px;
+        color: var(--muted);
+        flex-wrap: wrap;
+      }
+      .legend span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .choose {
+        background: linear-gradient(
+          180deg,
+          rgba(234, 197, 110, 0.07),
+          var(--panel)
+        );
+        border: 1px solid var(--gold2);
+        border-radius: 16px;
+        padding: 26px 28px;
+        margin-top: 28px;
+        text-align: center;
+      }
+      .choose h3 {
+        color: var(--gold2);
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .choose p {
+        color: var(--txt);
+        font-size: 15px;
+        margin-bottom: 16px;
+        max-width: 620px;
+        margin-inline: auto;
+      }
+      .go {
+        background: linear-gradient(135deg, var(--gold1), var(--gold2));
+        color: #0a0a0c;
+        border: none;
+        border-radius: 13px;
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 15px 38px;
+        cursor: pointer;
+      }
+      .go:hover {
+        transform: translateY(-1px);
+      }
+      .donemsg {
+        display: none;
+        margin-top: 14px;
+        color: var(--auto);
+        font-weight: 600;
+      }
+      #planfb {
+        display: none;
+        width: 100%;
+        max-width: 620px;
+        height: 130px;
+        margin: 14px auto 0;
+        background: #0a0a0c;
+        border: 1px solid var(--gold2);
+        border-radius: 10px;
+        color: var(--txt);
+        font-family: inherit;
+        font-size: 13px;
+        padding: 12px;
+        direction: rtl;
+      }
+      .stamp {
+        margin-top: 40px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="kicker">מפת הסוכנים · נבנתה ב-Claude Code</div>
+      <h1>{{שם_העסק}}</h1>
+      <div class="sub">כל משימות ה-C שלך — ומי יעשה כל אחת במקומך</div>
+
+      <h2>משימות C → סוכנים</h2>
+      <div class="h2sub">
+        ממוין לפי סוג. שלוש המודגשות = להתחיל מהן (הכי משחרר × הכי קל)
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>מחלקה</th>
+            <th>משימה</th>
+            <th>סוג</th>
+            <th>מתכון</th>
+            <th>דירוג</th>
+            <th>✓ לבנות?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- דוגמה: אוטומציה מובילה -->
+          <tr class="row-top">
+            <td class="dept">{{מחלקה}}</td>
+            <td>{{משימה}}</td>
+            <td><span class="ty auto">🤖 אוטומציה</span></td>
+            <td class="recipe">{{קוד_מתכון}} {{שם_מתכון}}</td>
+            <td class="rank">1</td>
+            <td>
+              <input type="checkbox" class="pick" data-task="{{משימה}}" />
+            </td>
+          </tr>
+          <!-- דוגמה: סוכן CC -->
+          <tr>
+            <td class="dept">{{מחלקה}}</td>
+            <td>{{משימה}}</td>
+            <td><span class="ty cc">✨ סוכן</span></td>
+            <td class="recipe">{{קוד_מתכון}} {{שם_מתכון}}</td>
+            <td class="rank">{{דירוג}}</td>
+            <td>
+              <input type="checkbox" class="pick" data-task="{{משימה}}" />
+            </td>
+          </tr>
+          <!-- דוגמה: דורש אדם → SOP -->
+          <tr>
+            <td class="dept">{{מחלקה}}</td>
+            <td>{{משימה}}</td>
+            <td><span class="ty human">✋ דורש אדם</span></td>
+            <td class="recipe">נוהל האצלה</td>
+            <td class="rank">—</td>
+            <td>
+              <input type="checkbox" class="pick" data-task="{{משימה}}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="legend">
+        <span
+          ><i class="dot" style="background: var(--auto)"></i> 🤖 אוטומציה — רץ
+          לבד</span
+        >
+        <span
+          ><i class="dot" style="background: var(--cc)"></i> ✨ סוכן — מנסח
+          במקומך</span
+        >
+        <span
+          ><i class="dot" style="background: var(--human)"></i> ✋ דורש אדם —
+          נוהל להאצלה</span
+        >
+      </div>
+
+      <div class="choose">
+        <h3>✍️ איזה סוכן תרצה שיעבוד במקומך — ראשון?</h3>
+        <p>
+          סמן למעלה (בעמודת "✓ לבנות?") את מה שהכי תרצה להוריד מהשולחן.
+          <b>בוחרים בפוקוס</b> — בונים אחד עד הסוף, ואז הבא. ואז:
+        </p>
+        <button class="go" onclick="copyPick()">
+          בנה לי את אלה ← צור תוכנית בנייה
+        </button>
+        <div class="donemsg" id="donemsg">
+          ✓ הועתק! הדבק (Cmd+V) ל-Claude — והוא יבנה את הסוכן.
+        </div>
+        <textarea id="planfb" readonly></textarea>
+      </div>
+
+      <div class="stamp">
+        — מעכשיו Claude Code בונה את הסוכנים שיעבדו במקומך —
+      </div>
+    </div>
+
+    <script>
+      function copyPick() {
+        const picked = Array.from(
+          document.querySelectorAll(".pick:checked"),
+        ).map((c) => c.getAttribute("data-task"));
+        if (!picked.length) {
+          alert("סמן קודם לפחות סוכן אחד בעמודת '✓ לבנות?'");
+          return;
+        }
+        let t = "בנה לי את הסוכנים האלה למשימות C שבחרתי (אחד-אחד, בעומק):\n";
+        t += picked.map((p) => "- " + p).join("\n");
+        t +=
+          "\n\nתתחיל מהראשון: חלוב ממני את מה שצריך, בנה את הסוכן, ותריץ אותו על דוגמה אמיתית.";
+        copyOut(t);
+      }
+      function copyOut(t) {
+        const msg = document.getElementById("donemsg");
+        const fb = document.getElementById("planfb");
+        const ok = () => {
+          msg.style.display = "block";
+          fb.style.display = "none";
+        };
+        const manual = () => {
+          fb.value = t;
+          fb.style.display = "block";
+          msg.style.display = "none";
+          fb.focus();
+          fb.select();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(t)
+            .then(ok)
+            .catch(() => execCopy(t, ok, manual));
+        } else {
+          execCopy(t, ok, manual);
+        }
+      }
+      function execCopy(t, ok, manual) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = t;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          const s = document.execCommand("copy");
+          document.body.removeChild(ta);
+          if (s) {
+            ok();
+            return;
+          }
+        } catch (e) {}
+        manual();
+      }
+    </script>
+  </body>
+</html>
