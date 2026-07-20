@@ -4,14 +4,14 @@
 
 | קבוצה                  | כמה | רישיון            | בעל הזכויות / מקור                                              |
 | ---------------------- | --- | ----------------- | --------------------------------------------------------------- |
-| `01-שלך`               | 4   | לשימוש בסדנה בלבד | טל בשור                                                         |
+| `01-שלך`               | 7   | לשימוש בסדנה בלבד | טל בשור                                                         |
 | `02-anthropic-apache2` | 11  | Apache-2.0        | Anthropic — https://github.com/anthropics/skills                |
 | `03-marketing-mit`     | 6   | MIT               | Corey Haines + הצהרת frontmatter                                |
 | `04-gstack-mit`        | 11  | MIT               | Garry Tan — https://github.com/garrytan/gstack                  |
-| `05-superpowers-mit`   | 1   | MIT               | Jesse Vincent (obra)                                            |
+| `05-superpowers-mit`   | 14  | MIT               | Jesse Vincent (obra)                                            |
 | `06-marketing-mit`     | 28  | MIT               | Corey Haines — https://github.com/coreyhaines31/marketingskills |
 
-**סהכ: 61 סקילים מותרים להפצה.**
+**סהכ: 78 סקילים מותרים להפצה (כולל business-app-builder).**
 
 ## תנאי השימוש בקצרה
 
