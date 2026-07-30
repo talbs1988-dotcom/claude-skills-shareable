@@ -3,7 +3,7 @@
 
 שימוש:
   python3 send_quote_to_whatsapp.py \
-    --phone "0501234567" \
+    --phone "0500000000" \
     --pdf-url "https://...pdf" \
     --caption "היי יעל, מצרפת הצעת מחיר..."
 
@@ -38,7 +38,7 @@ def load_keys():
 
 
 def normalize_phone(raw):
-    """0501234567 או 972501234567 או +972-50-123-4567 → 972501234567"""
+    """0500000000 או 972500000000 או +972-50-000-0000 → 972500000000"""
     digits = re.sub(r"\D", "", raw)
     if digits.startswith("0"):
         digits = "972" + digits[1:]

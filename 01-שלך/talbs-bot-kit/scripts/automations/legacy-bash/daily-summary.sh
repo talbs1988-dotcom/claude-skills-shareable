@@ -3,7 +3,7 @@
 #
 # Reads configuration from .env in the same directory as this script.
 # Required .env variables:
-#   USER_WHATSAPP_JID          — full JID (e.g. "972501234567@s.whatsapp.net")
+#   USER_WHATSAPP_JID          — full JID (e.g. "972500000000@s.whatsapp.net")
 #   AIRTABLE_BASE_ID           — base ID (appXXX)
 #   TABLE_LEADS_ID             — table ID for leads
 #   TABLE_TASKS_ID             — table ID for tasks

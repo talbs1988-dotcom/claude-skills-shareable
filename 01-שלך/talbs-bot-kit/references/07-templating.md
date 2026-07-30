@@ -12,8 +12,8 @@
 | -------------------------- | ------------------- | ----------------------------- |
 | `{{USER_NAME}}`            | שמה                 | "שרה כהן"                     |
 | `{{OS}}`                   | מערכת הפעלה         | "Mac" / "Windows" / "Cloud"   |
-| `{{USER_WHATSAPP_NUMBER}}` | מספר WhatsApp ללא + | "972501234567"                |
-| `{{USER_WHATSAPP_JID}}`    | JID מלא             | "972501234567@s.whatsapp.net" |
+| `{{USER_WHATSAPP_NUMBER}}` | מספר WhatsApp ללא + | "972500000000"                |
+| `{{USER_WHATSAPP_JID}}`    | JID מלא             | "972500000000@s.whatsapp.net" |
 
 ### מקטגוריה 1 (Business)
 

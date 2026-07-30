@@ -216,7 +216,7 @@ async function handleNotification(notif) {
     return;
   }
 
-  const sender = body.senderData?.sender || ""; // e.g. "972501234567@c.us"
+  const sender = body.senderData?.sender || ""; // e.g. "972500000000@c.us"
   const chatId = body.senderData?.chatId || sender;
   const senderName = body.senderData?.senderName || "";
   const messageData = body.messageData || {};
@@ -386,7 +386,7 @@ ${
       return;
     }
     // /group/send — Baileys-compatible endpoint so existing automations (morning-agenda, etc.) keep working.
-    // accepts {jid, text} where jid is "972501234567@s.whatsapp.net" or "...@g.us" or "...@c.us".
+    // accepts {jid, text} where jid is "972500000000@s.whatsapp.net" or "...@g.us" or "...@c.us".
     if (req.url === "/group/send" && req.method === "POST") {
       let body = "";
       req.on("data", (c) => (body += c));

@@ -5,7 +5,7 @@
 # Reads configuration from .env in the same directory as this script.
 # Required .env variables:
 #   USER_NAME              — display name (e.g. "שרה")
-#   USER_WHATSAPP_JID      — full JID (e.g. "972501234567@s.whatsapp.net")
+#   USER_WHATSAPP_JID      — full JID (e.g. "972500000000@s.whatsapp.net")
 #   CLAUDE_BIN             — path to claude CLI binary (default: "claude")
 #   BOT_HTTP_PORT          — bot's HTTP port (default: 7654)
 set -u

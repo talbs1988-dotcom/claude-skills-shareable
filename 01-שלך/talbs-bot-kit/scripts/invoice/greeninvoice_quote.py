@@ -5,7 +5,7 @@
   python3 greeninvoice_quote.py \
     --client-name "יעל כהן" \
     --client-id "123456789" \
-    --client-phone "0501234567" \
+    --client-phone "0500000000" \
     --client-email "yael@example.com" \
     --description "ליווי 3 חודשים" \
     --amount 12800 \
