@@ -11,6 +11,7 @@ Usage:
 from __future__ import annotations
 
 import datetime as dt
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -43,6 +44,23 @@ DEFAULT_TZ = "Asia/Jerusalem"
 
 def _get_field(rec: dict[str, Any], name: str, default: Any = None) -> Any:
     return rec.get("fields", {}).get(name, default)
+
+
+def _require_table(env: dict[str, str], label: str, *keys: str) -> str:
+    """Resolve an Airtable table ID from the first env var that is set.
+
+    Accepts several key names so both the skill convention (AIRTABLE_*_TABLE)
+    and the env.template convention (TABLE_*_ID) work. There is deliberately
+    no hardcoded default — a table ID is personal data and must come from .env.
+    """
+    for key in keys:
+        val = env.get(key) or os.environ.get(key)
+        if val and val.strip() and not val.strip().startswith("{{"):
+            return val.strip()
+    raise RuntimeError(
+        f"חסר משתנה סביבה עבור טבלת {label} — הגדירי {keys[0]} בקובץ .env "
+        f"(ראי templates/env.template)"
+    )
 
 
 def count_leads_today(token, base_id, table_id, date_field, today_str):
@@ -170,9 +188,9 @@ def main() -> int:
         # Accept either AIRTABLE_PAT (Tal's existing convention) or AIRTABLE_API_KEY (skill default)
         token = env.get("AIRTABLE_PAT") or env_get(env, "AIRTABLE_API_KEY")
         base_id = env_get(env, "AIRTABLE_BASE_ID")
-        leads_table = env.get("AIRTABLE_LEADS_TABLE", "tblJtOZMKRGnnx4or")
-        deals_table = env.get("AIRTABLE_DEALS_TABLE", "tbld7FZCBm2JvSUyn")
-        tasks_table = env.get("AIRTABLE_TASKS_TABLE", "tblbM772kokDbyE7q")
+        leads_table = _require_table(env, "לידים", "AIRTABLE_LEADS_TABLE", "TABLE_LEADS_ID")
+        deals_table = _require_table(env, "עסקאות", "AIRTABLE_DEALS_TABLE", "TABLE_TRANSACTIONS_ID")
+        tasks_table = _require_table(env, "משימות", "AIRTABLE_TASKS_TABLE", "TABLE_TASKS_ID")
         lead_date_field = env.get("AIRTABLE_LEAD_DATE_FIELD", "תאריך כניסת ליד")
         lead_status_field = env.get("AIRTABLE_LEAD_STATUS_FIELD", "סטטוס")
         lead_followup_field = env.get("AIRTABLE_LEAD_FOLLOWUP_DATE_FIELD", "תאריך פולואפ")
