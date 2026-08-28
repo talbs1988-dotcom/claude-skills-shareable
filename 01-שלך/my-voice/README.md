@@ -55,15 +55,15 @@
 
 ---
 
-## 📥 התקנה (העתק-הדבק אחד)
+## 📥 התקנה
 
-לשמור את התיקייה `my-voice` בתיקיית ההורדות, לפתוח את הטרמינל (Terminal), ולהדביק:
+לפתוח את הטרמינל (Terminal) ולהדביק את זה. שורה אחת, לוחצים אנטר:
 
 ```bash
-mkdir -p ~/.claude/skills && cp -R ~/Downloads/my-voice ~/.claude/skills/ && ls ~/.claude/skills/my-voice
+mkdir -p ~/.claude/skills && curl -fsSL https://codeload.github.com/talbs1988-dotcom/claude-skills-shareable/tar.gz/refs/heads/main | tar -xz -C ~/.claude/skills --strip-components=2 --include='*/my-voice/*' && ls ~/.claude/skills/my-voice
 ```
 
-אם ראית רשימת קבצים, זה הותקן.
+אם קיבלת רשימה שמופיעים בה `SKILL.md`, `README.md`, `references` ו-`scripts` — זה הותקן.
 
 **עכשיו לסגור את קלוד קוד ולפתוח מחדש.** סקיל חדש נטען רק בפתיחה.
 
