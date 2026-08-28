@@ -145,7 +145,7 @@ find ~/Downloads ~/Desktop -maxdepth 2 -type f \( -iname "*chat*" -o -iname "*wh
 
 ## שלב 2 — פרופיל הקול
 
-קרא את `references/voice-profile-template.md` והשתמש בשלד שבו, על אחד-עשר חלקיו.
+קרא את `references/voice-profile-template.md` והשתמש בשלד שבו, על תשעת חלקיו.
 
 ### קודם: מי מדבר כאן
 

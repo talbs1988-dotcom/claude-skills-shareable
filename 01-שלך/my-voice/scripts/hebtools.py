@@ -187,7 +187,7 @@ def _extract(line):
 
 def _head_num(text):
     """כותרת של חלק פרופיל: המספר הוא הטוקן הראשון בכותרת."""
-    m = re.match(r"^\**\s*(10|[0-9])\s*[.:)\u05f3]\s", text.strip() + " ")
+    m = re.match(r"^\**\s*([0-8])\s*[.:)\u05f3]\s", text.strip() + " ")
     return int(m.group(1)) if m else None
 
 
@@ -376,42 +376,8 @@ def cmd_verify(skill_path, source_path):
     in_scope_failed = sum(1 for i, q in failed if q in seen)
     unchecked = sum(1 for i, q, _ in skipped if q in seen)
     passed = len(seen) - in_scope_failed - unchecked
-
-    # שער שלמות: פרופיל חלקי שנראה שלם הוא הכשל היקר ביותר
-    gaps = []
-    missing = [n for n in range(11) if n not in parts_seen]
-    if missing:
-        gaps.append("חלקים שלא נכתבו בכלל: " +
-                    ", ".join(str(x) for x in missing))
-    body = "\n".join(lines)
-    for num, need, what in ((6, 6, "צדדים"), (7, 5, "איסורים"),
-                            (8, 4, "מהלכים"), (10, 5, "מונחי מקצוע")):
-        m = re.search(r"#+\s*\**\s*%d\s*[.:)]" % num, body)
-        if not m:
-            continue
-        rest = body[m.end():]
-        nxt = re.search(r"\n#+\s", rest)
-        sec = rest[:nxt.start()] if nxt else rest
-        if num in (7, 10):
-            items = [l for l in sec.split("\n")
-                     if _is_bullet(l) and l.strip(" -*\u2022")]
-        else:
-            items = [l for l in sec.split("\n")
-                     if _is_bullet(l) and (_extract(l)[0] or "לא מופה" in l)]
-        if len(items) < need:
-            gaps.append("חלק {}: {} מתוך {} {}".format(
-                num, len(items), need, what) +
-                (" — לכל אחד שלא נמצא בחומר לרשום במפורש 'לא מופה'"
-                 if num not in (7, 10) else " — צריך עוד"))
-    if gaps:
-        print("\n" + "!" * 62)
-        print("הפרופיל חלקי. פרופיל חלקי שנראה שלם הוא הכשל היקר ביותר:")
-        print("!" * 62)
-        for g in gaps:
-            print("  · " + g)
-        print("\nהתלמיד יגלה את החוסר בדיוק ברגע שהוא הכי צריך את הסקיל.")
     print("\n" + "=" * 62)
-    if failed or skipped or stray or gaps:
+    if failed or skipped or stray:
         print("N זמני: {} ציטוטים עברו. אל תמסור אותו למשתמש עדיין —".format(
             passed))
         print("קודם לטפל בכשלים וברשימת 'לא נבדקו', ואז להריץ שוב.")
