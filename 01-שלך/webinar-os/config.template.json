@@ -1,0 +1,60 @@
+{
+  "slug": "kebab-case-english (למשל nutrition-after-birth) - שם התיקייה",
+  "project_name": "השם האנושי של הוובינר",
+  "business_name": "שם העסק / המותג כפי שיופיע בדפים (ברירת מחדל: שם המרצה/ה)",
+  "topic": "על מה הוובינר, משפט אחד (שאלה 1)",
+  "promise": "מה יוצאים איתו ביד בסוף השעה (שאלה 2)",
+  "audience": "הקהל כאדם אחד: מה עושה, מה מציק (שאלה 3)",
+  "date_he": "תאריך בעברית, למשל 'יום שלישי, 15.9'",
+  "date_iso": "YYYY-MM-DD",
+  "time": "HH:MM",
+  "event_iso": "YYYY-MM-DDTHH:MM:00+03:00 (שעון ישראל; מפעיל ספירה לאחור)",
+  "duration_min": 60,
+  "platform": "זום",
+  "recording": "כן / לא (שאלה 4)",
+  "host_name": "שם המרצה/ה (שאלה 5)",
+  "host_role": "תפקיד קצר",
+  "host_proof": "ההוכחה האחת הכי חזקה, עם מקור",
+  "next_step": "whatsapp-group (ברירת מחדל) | email | calendar (שאלה 6)",
+  "privacy_url": "https://כתובת מדיניות הפרטיות (שאלה 8). ריק = תיבת ההסכמה בלי לינק; חובה לפני שעולים לאוויר",
+  "terms_url": "",
+  "accessibility_url": "",
+  "contact_line": "מייל או טלפון לפוטר (רשות)",
+  "voice": {
+    "archetype": "direct | warm | precise | energetic",
+    "address": "singular | plural | group",
+    "banned": []
+  },
+
+  "group_link": "לינק ההזמנה לקבוצת הוואטסאפ (מתמלא בשלב 5)",
+  "broadcast_link": "לינק הזום (מתמלא בשלב 7)",
+  "page_url": "כתובת הדף החי (נכתבת לבד בשלב 9 על ידי deploy_netlify.py; אפשר גם למלא ביד)",
+  "netlify_site_id": "מזהה האתר ב-Netlify (נכתב לבד בשלב 9; קיים = הרצה חוזרת מעדכנת את אותו אתר)",
+
+  "netlify_form": "webinar-register (ברירת המחדל: לכידה דרך Netlify Forms, בלי אף צעד ידני). ריק = נופלים ל-form_action",
+  "form_action": "מסלול חלופי: https://docs.google.com/forms/d/e/XXXX/formResponse (ריק גם כאן = כפתור לקבוצה במקום טופס)",
+  "form_fields": { "name": "entry.XXXX", "phone": "entry.XXXX", "email": "entry.XXXX", "consent": "entry.XXXX" },
+  "lead_mode": "netlify-forms (ברירת המחדל) | google-sheet | whatsapp-group | mailing-system. תיעוד בלבד: איפה הלידים נשמרים, לשורה של שלב 9. מצב הרינדור נגזר מ-netlify_form ומ-form_action בלבד",
+
+  "hero_photo": "",
+  "host_photo": "",
+  "og_image": "",
+  "capture_endpoint": "",
+
+  "brand": {
+    "direction_name": "שם כיוון העיצוב שנבחר בשלב 8 (תיעוד)",
+    "bg": "#0A0E1A",
+    "surface": "#131A2C",
+    "ink": "#F4F6FB",
+    "muted": "#9BA6C0",
+    "accent": "#F5B54A",
+    "accent_2": "#FF7A59",
+    "radius": "18px",
+    "font": "Heebo",
+    "extra_css": "2-3 שורות CSS של דקדוק הכיוון (שלב 8), עם קידומת #main לדף ו-.slide למצגת. CSS בלבד, בלי HTML. ריק = ברירת המחדל",
+    "logo": "",
+    "deck_font": "פונט אחר למצגת בלבד (שלב 8). ריק = כמו font",
+    "font_links": [],
+    "deck": {}
+  }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--
+  Webinar-OS · קריאייטיב 1080x1080 (מתקדם: reference/advanced.md, סעיף קריאייטיבים)
+  תבנית אחת לכל הקריאייטיבים. ?story בכתובת = 1080x1920.
+  מתמלא על ידי render_pages.py --creatives מתוך copy.json (מפתח creatives) + config.json.
+  מערכת העיצוב: אותו בלוק :root כמו הדפים והמצגת.
+-->
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>{{punch}} · {{project_name}}</title>
+{{{brand.font_links}}}
+<style>
+:root{
+  --bg:{{brand.bg}};
+  --surface:{{brand.surface}};
+  --ink:{{brand.ink}};
+  --muted:{{brand.muted}};
+  --accent:{{brand.accent}};
+  --accent-2:{{brand.accent_2}};
+  --radius:{{brand.radius}};
+  --font:'{{brand.font}}',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+}
+:root{--on-accent:{{brand.on_accent}};--line:rgba(255,255,255,.09);--accent-rgb:{{brand.accent_rgb}}; --accent-2-rgb:{{brand.accent_2_rgb}};--glow:rgba(var(--accent-rgb),.28); --glow-2:rgba(var(--accent-2-rgb),.16);--grid:rgba(255,255,255,.05);--grad:linear-gradient(120deg,var(--accent),var(--accent-2))}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1080px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--font)}
+body.story{height:1920px}
+.stage{position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:96px}
+.scene{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.scene::before{content:"";position:absolute;inset:-10%;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000 0%,transparent 78%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000 0%,transparent 78%)}
+.scene .glow{position:absolute;border-radius:50%;filter:blur(110px)}
+.scene .g1{width:900px;height:900px;right:-300px;top:-380px;background:var(--glow)}
+.scene .g2{width:700px;height:700px;left:-260px;bottom:-320px;background:var(--glow-2)}
+.photo{position:absolute;inset:0;background:url("{{creative_photo}}") center/cover no-repeat;opacity:.28;mask-image:linear-gradient(180deg,#000 0%,transparent 85%);-webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 85%)}
+.inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:34px;max-width:900px}
+.eyebrow{display:inline-flex;gap:14px;align-items:center;font-weight:700;font-size:30px;color:var(--accent);border:2px solid rgba(var(--accent-rgb),.4);background:rgba(var(--accent-rgb),.1);padding:14px 32px;border-radius:999px}
+.eyebrow::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 20px var(--accent)}
+.live .eyebrow{background:var(--grad);color:var(--on-accent);border-color:transparent}
+.live .eyebrow::before{background:var(--on-accent);box-shadow:none;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.3}}
+.punch{font-size:132px;font-weight:900;line-height:1.02;letter-spacing:-.03em}
+.punch.long{font-size:104px}
+.punch .hl{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subline{font-size:44px;line-height:1.35;color:var(--muted);font-weight:500;max-width:820px}
+.card{display:flex;gap:18px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 36px;font-size:34px;font-weight:700;margin-top:10px}
+.card b{color:var(--accent)}
+.brand{position:absolute;bottom:64px;left:0;right:0;text-align:center;font-size:28px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.brand img{height:44px;width:auto;margin:0 auto 10px;display:block}
+.link{position:absolute;bottom:120px;left:0;right:0;text-align:center;font-size:30px;color:var(--ink);font-weight:600;direction:ltr}
+body.story .stage{padding:140px 96px}
+body.story .punch{font-size:150px}
+body.story .punch.long{font-size:118px}
+body.story .inner{gap:44px}
+/* ===== שלב 8: 2-3 שורות דקדוק של כיוון העיצוב שנבחר (config.brand.extra_css) ===== */
+{{{brand.extra_css}}}
+</style>
+</head>
+<body class="{{creative_class}}">
+<div class="stage">
+  <div class="scene" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span></div>
+  {{#if creative_photo}}<div class="photo" aria-hidden="true"></div>{{/if}}
+  <div class="inner">
+    <span class="eyebrow">{{tag_text}}</span>
+    <h1 class="punch {{punch_size}}">{{{punch_html}}}</h1>
+    <p class="subline">{{subline}}</p>
+    <div class="card">📅 <b>{{date_line}}</b></div>
+  </div>
+  {{#if link}}<div class="link">{{link}}</div>{{/if}}
+  <div class="brand">{{#if brand.logo}}<img src="{{brand.logo}}" alt="">{{/if}}{{business_name}}</div>
+</div>
+<script>if(/(^|[?&])story(=|&|$)/.test(location.search))document.body.classList.add('story');</script>
+</body>
+</html>
